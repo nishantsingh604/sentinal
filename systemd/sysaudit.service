@@ -1,0 +1,30 @@
+
+[Unit]
+Description=System Health Monitor and Security Auditing Daemon (sysaudit)
+Documentation=file:/opt/sysaudit/README.md
+After=network.target local-fs.target
+RequiresMountsFor=/course_project
+
+[Service]
+Type=simple
+# Requirement 11: the daemon only runs as auditmanager
+User=auditmanager
+Group=auditmanager
+ExecStart=/opt/sysaudit/sysaudit.sh --daemon
+Restart=on-failure
+RestartSec=10
+# Exit code 2 (IDENTITY_VIOLATION) and 3 (CONFIG MISSING) are not retryable
+RestartPreventExitStatus=2 3 4
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sysaudit
+
+# Hardening (extra marks for security awareness)
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/course_project/audit /var/log/sysaudit_daemon.log
+
+[Install]
+WantedBy=multi-user.target

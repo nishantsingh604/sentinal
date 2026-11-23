@@ -1,0 +1,14 @@
+# /etc/systemd/system/sysaudit-cleanup.service
+[Unit]
+Description=sysaudit periodic maintenance (archive and prune)
+
+[Service]
+Type=oneshot
+User=auditmanager
+Group=auditmanager
+ExecStart=/opt/sysaudit/BK_scheduler.sh
+SyslogIdentifier=sysaudit-cleanup
+NoNewPrivileges=yes
+ProtectSystem=strict
+# /opt/sysaudit must be writable: the scheduler keeps .last_archive_run beside the script
+ReadWritePaths=/course_project/audit /opt/sysaudit /var/log/sysaudit_daemon.log
